@@ -40,7 +40,7 @@ void loop() {
 
 void postureHandler(){
   Serial.println("bad");
-  badPosture = 1;
+  badPosture = digitalRead(badPosturePin);
   TCNT1 = 0;  //start counting time to determine how long bad posture has been maintained
   return;
 }
