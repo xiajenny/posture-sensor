@@ -30,11 +30,11 @@ void loop() {
   }
   
   if (!badPosture) {  //goodPosture
-   TCCR1B = 0; //pause time
+   TCCR1B = 0; //pause timer
    digitalWrite(beginnerLED, LOW);
    digitalWrite(intermediateLED, LOW);
    digitalWrite(extremeLED, LOW);
-  
+   TCCR1B = 0x3;  //re-enable timer
 }
 
 
