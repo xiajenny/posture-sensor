@@ -17,7 +17,6 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(badPosturePin), handler(), LOW);  //bad posture when button is high
 
-
   TIMSK1 = 6; //enable OCR1A/B
   OCR1A = 100; //100 seconds and LED flashes
   OCR1B = 1000; //1000 seconds and LED flashes
@@ -25,11 +24,12 @@ void setup() {
 }
 
 void loop() {
-  if (badPosture) {
-   digitalWrite(beginnerLED, HIGH);
-  }
   
-  if (!badPosture) {  //goodPosture
+   if (badPosture) {
+    digitalWrite(beginnerLED, HIGH);
+   }
+  
+   else if (!badPosture) {  //if there is good Posture
    TCCR1B = 0; //pause timer
    digitalWrite(beginnerLED, LOW);
    digitalWrite(intermediateLED, LOW);
