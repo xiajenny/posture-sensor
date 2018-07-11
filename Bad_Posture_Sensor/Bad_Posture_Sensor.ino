@@ -12,6 +12,9 @@ int backSensor = 4;
 int shoulderSensor = 5;
 int spineSensor = 6;
 
+int flexSensor = A0;
+float value = 0;  //change to int? analogRead() changes to voltage to int between 0-1023
+
 volatile bool badPosture = 0; //determined by state of badPosture pin
 
 void setup() {
@@ -31,6 +34,9 @@ void setup() {
   pinMode(backSensor,INPUT);
   pinMode(shoulderSensor, INPUT);
   pinMode(spineSensor, INPUT);
+
+  pinMode(3, OUTPUT);
+
   
   TCCR1A = 0;     //reset  
   TCCR1B = 0;
@@ -44,6 +50,26 @@ void setup() {
 }
 
 void loop() {
+value = analogRead(flexSensor);
+Serial.println("Flex value: ");
+Serial.print(value);  
+
+  if (value > float(500)) {
+    //bent = 1;
+Serial.println("light up : ");
+    digitalWrite(3, HIGH);
+  }
+  else if (value < float(450)) {
+    //bent = 1;
+Serial.println("light up : ");
+    digitalWrite(3, HIGH);
+  }
+  else if (value > float(450) && value < float(500)) {
+    //bent = 0;
+Serial.println("don't up : ");
+    digitalWrite(3, LOW);
+  }
+  
   if (badPosture) {
    digitalWrite(beginnerLED, HIGH);
    if ( digitalRead(backSensor) ) 
