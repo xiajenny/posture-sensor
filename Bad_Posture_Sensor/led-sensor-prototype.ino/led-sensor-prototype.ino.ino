@@ -30,6 +30,17 @@ volatile bool timerP1 = false;
 volatile bool timerP2 = false;
 volatile bool timerP3 = false;
 
+volatile bool startTime = false;
+volatile bool endTime = false;
+
+float duration = 0;
+
+float startOverallTime = 0;
+float startBackTime = 0;
+float startShoulderLTime = 0;
+float startShoulderRTime = 0;
+float startNeckTime = 0;
+
 unsigned long int timer1_ovf = 0;
 
 //**************************************************************************************
@@ -74,10 +85,11 @@ void setup() {
   cli();
   //TIMERS & INTERRUPTS
   TCCR1A = 0;  //reset  
-  TCCR1B = 0;
+  TCCR1B = 0;  //reset
   TCCR1B = 5;  //set timer1 prescaler to /1024
-  TIMSK1 = 1; //enable overflow interrupt for timer1
-  
+  TIMSK1 = 1; //enable overflow interrupt for timer1 (used for our timer1Millis())
+
+  //Whenever either type of bad posture is detected, the badPosturePin in will turn HIGH 
   attachInterrupt(digitalPinToInterrupt(badPosturePin), postureHandler, CHANGE);  
 
   OCR1A = 23437; //timer1 compare interruptA value: 1.5 seconds and LED flashes
@@ -104,15 +116,7 @@ void setup() {
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, LOW);
   digitalWrite (ledPinR2, LOW); 
-   /* 
-   ledA = 0;
-   ledB = 0;
-   ledC = 1;
-   ledD = 1;
-   ledE = 1;
-   ledF = 1;
-   ledG = 0;
-   ledH = 0;*/
+
    sei();
 }
 
@@ -121,18 +125,32 @@ void setup() {
 //                              MAIN LOOP
 
 void loop() {
-    
+
+  if (startTime) {
+    startOverallTime = timer1Millis();  //set start time for timing overall bad posture
+    startTime = false;                  //reset flag
+  }
+
+  if (endTime) {
+    duration = (timer1Millis() - startOverallTime)/1000; //calculate duration in s
+    Serial.print("Overall bad posture lasted for: ");
+    Serial.print(duration);
+    Serial.println("s");
+    endTime = false;      //reset flag
+  }
+
+  //The following 4 if statements turn on the "timing indicator" lights (top row of LEDs)
   if (badPosture) {
    turnOnA();
-
-   if ( timerP1 ) 
+  if ( timerP1 ) 
     turnOnB();
-   if ( timerP2 ) 
+  if ( timerP2 ) 
     turnOnC();
-   if ( timerP3 ) 
+  if ( timerP3 ) 
     turnOnD();
     
-    
+   //The following 4 if statements turn on the "target problem area indicator" lights 
+   //                                                             (bottom row of LEDS) 
    // BACK
    if ( digitalRead(backSensor) ) 
     turnOnE();
@@ -178,6 +196,8 @@ void postureHandler(){
       Serial.println("bad");
       TCNT1 = 0; //Reset timer1 so that the count for bad posture can restart
       TIMSK1 = 7; //enable OCR1A/B (timer compare interrupts) as well as timer overflow interrupt
+      startTime = true;
+      endTime = false;
   }
  if(!badPosture) {
       Serial.println("good");
@@ -185,6 +205,8 @@ void postureHandler(){
       timerP1 = false;
       timerP2 = false;
       timerP3 = false;
+      startTime = false;
+      endTime = true;
  }
 }
 
