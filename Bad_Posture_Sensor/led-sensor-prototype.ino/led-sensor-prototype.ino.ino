@@ -140,34 +140,13 @@ void setup() {
 
 void loop() {
 
-  if (startTime) {
-    startOverallTime = timer1Millis();  //set start time for timing overall bad posture
-    startTime = false;                  //reset flag
-  }
-
-  if (endTime) {
-    duration = (timer1Millis() - startOverallTime) / 1000; //calculate duration in s
-    //Printing recorded timings
-    Serial.print("Overall bad posture lasted for: ");
-    Serial.print(duration);
-    Serial.println("s");
-    Serial.print("Back time: ");
-    Serial.println(totalBackTime);
-    Serial.print("Left Shoulder time: ");
-    Serial.println(totalShoulderLTime);
-    Serial.print("Right Shoulder time: ");
-    Serial.println(totalShoulderRTime);
-    Serial.print("Neck time: ");
-    Serial.println(totalNeckTime);
-    totalBackTime = 0;
-    totalShoulderLTime = 0;
-    totalShoulderRTime = 0;
-    totalNeckTime = 0;
-    endTime = false;      //reset flag
-  }
-
   //The following 4 if statements turn on the "timing indicator" lights (top row of LEDs)
-  if (badPosture) {
+  while (badPosture) {
+
+    if (startTime) {
+      startOverallTime = timer1Millis();  //set start time for timing overall bad posture
+      startTime = false;                  //reset flag
+    }
     turnOnA();
     if ( timerP1 )
       turnOnB();
@@ -189,9 +168,9 @@ void loop() {
     else {
       turnOffLEDS();
       if (startBack) {
-        totalBackTime = ((timer1Millis() - startTimeBack ) + totalBackTime) / 1000;
+        totalBackTime = ((timer1Millis() - startTimeBack ) + totalBackTime);
         startBack = false;
-        Serial.println( totalBackTime );
+        Serial.println( totalBackTime / 1000 );
       }
     }
 
@@ -206,9 +185,9 @@ void loop() {
     else {
       turnOffLEDS();
       if (startShoulderL) {
-        totalShoulderLTime = ((timer1Millis() - startTimeShoulderL ) + totalShoulderLTime) / 1000;
+        totalShoulderLTime = ((timer1Millis() - startTimeShoulderL ) + totalShoulderLTime);
         startShoulderL = false;
-        Serial.println( totalShoulderLTime );
+        Serial.println( totalShoulderLTime / 1000 );
       }
     }
 
@@ -223,9 +202,9 @@ void loop() {
     else {
       turnOffLEDS();
       if (startShoulderR) {
-        totalShoulderRTime = ((timer1Millis() - startTimeShoulderR ) + totalShoulderRTime) / 1000;
+        totalShoulderRTime = ((timer1Millis() - startTimeShoulderR ) + totalShoulderRTime);
         startShoulderR = false;
-        Serial.println( totalShoulderRTime );
+        Serial.println( totalShoulderRTime / 1000 );
       }
     }
 
@@ -240,16 +219,43 @@ void loop() {
     else {
       turnOffLEDS();
       if (startNeck) {
-        totalNeckTime = ((timer1Millis() - startTimeNeck ) + totalNeckTime) / 1000;
+        totalNeckTime = ((timer1Millis() - startTimeNeck ) + totalNeckTime);
         startNeck = false;
-        Serial.println( totalNeckTime );
+        Serial.println( totalNeckTime / 1000 );
       }
     }
 
   }
+
   if (!badPosture) {  //good posture, so turn off all LED indicator lights
     turnOffLEDS();
 
+    if (endTime) {
+      duration = (timer1Millis() - startOverallTime); //calculate duration
+
+      //Printing recorded timings
+      Serial.print("Overall bad posture lasted for: ");
+      Serial.print(duration / 1000);
+      Serial.println("s");
+
+      Serial.print("Back time: ");
+      Serial.println(totalBackTime / 1000);
+
+      Serial.print("Left Shoulder time: ");
+      Serial.println(totalShoulderLTime / 1000);
+
+      Serial.print("Right Shoulder time: ");
+      Serial.println(totalShoulderRTime / 1000);
+
+      Serial.print("Neck time: ");
+      Serial.println(totalNeckTime / 1000);
+
+      totalBackTime = 0;
+      totalShoulderLTime = 0;
+      totalShoulderRTime = 0;
+      totalNeckTime = 0;
+      endTime = false;      //reset flag
+    }
   }
 
 }
