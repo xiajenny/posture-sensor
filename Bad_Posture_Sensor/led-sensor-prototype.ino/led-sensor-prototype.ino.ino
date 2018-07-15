@@ -32,8 +32,13 @@ volatile bool timerP3 = false;
 
 volatile bool startTime = false;
 volatile bool endTime = false;
-
 float duration = 0;
+
+//Individual Timer Variables
+bool startNeck = false;
+float startTimeNeck = 0.0;
+float totalNeckTime = 0.0;
+
 
 float startOverallTime = 0;
 float startBackTime = 0;
@@ -136,6 +141,8 @@ void loop() {
     Serial.print("Overall bad posture lasted for: ");
     Serial.print(duration);
     Serial.println("s");
+    Serial.print("Neck time: ");
+    Serial.println(totalNeckTime);
     endTime = false;      //reset flag
   }
 
@@ -170,12 +177,21 @@ void loop() {
    turnOffLEDS();
     
    // NECK
-   if ( digitalRead(neckSensor) ) 
+   if ( digitalRead(neckSensor) ) {
+    startTimeNeck = timer1Millis();
+    startNeck = true;
     turnOnH();
-   else 
+   }
+   else {
    turnOffLEDS();
+   if(startNeck){
+   totalNeckTime = (timer1Millis() - startTimeNeck ) + totalNeckTime;
+   startNeck = false;
+   Serial.println( totalNeckTime );
+   }
   }
   
+  }
   if (!badPosture) {  //good posture, so turn off all LED indicator lights
   turnOffLEDS(); 
   }
