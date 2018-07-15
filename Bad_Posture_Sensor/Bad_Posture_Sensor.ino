@@ -12,7 +12,7 @@ int backSensor = 4;
 int shoulderSensor = 5;
 int spineSensor = 6;
 
-int flexSensor = A0;
+int flexSensor = A1;
 float value = 0;  //change to int? analogRead() changes to voltage to int between 0-1023
 
 volatile bool badPosture = 0; //determined by state of badPosture pin
@@ -52,22 +52,28 @@ void setup() {
 void loop() {
 value = analogRead(flexSensor);
 Serial.println("Flex value: ");
-Serial.print(value);  
+Serial.println(value);  
+delay(500);
 
-  if (value > float(500)) {
-    //bent = 1;
+
+  if (value > float(450)) {
+    //badPosturePin = 1;
 Serial.println("light up : ");
     digitalWrite(3, HIGH);
+//    delay(500);
   }
-  else if (value < float(450)) {
-    //bent = 1;
+  else if (value < float(300)) {
+    //badPosturePin = 1;
 Serial.println("light up : ");
+//delay(500);
     digitalWrite(3, HIGH);
   }
-  else if (value > float(450) && value < float(500)) {
-    //bent = 0;
-Serial.println("don't up : ");
+  else if (value > float(300) && value < float(450)) {
+    //badPosturePin = 0;
+Serial.println("don't light up : ");
+//delay(500);
     digitalWrite(3, LOW);
+   
   }
   
   if (badPosture) {
@@ -111,6 +117,7 @@ void postureHandler(){
       Serial.println("good");
       TIMSK1 = 0;   
  }
+ 
 }
 
 ISR (TIMER1_COMPA_vect) { //intermediate bad posture, after 100 seconds
