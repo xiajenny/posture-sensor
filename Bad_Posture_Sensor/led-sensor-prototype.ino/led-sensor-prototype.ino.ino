@@ -8,6 +8,7 @@
 //                 WITH THANKS TO ORION BRUCKMAN AND CHRIS MCCLELLAN
 //                
 //             ALL CODE HEREIN IS WRITTEN BY SIENNA WISHART AND JENNY XIA
+
 //
 //**************************************************************************************
 //**************************************************************************************
@@ -70,11 +71,12 @@ bool ledH = false; //bad neck posture
 
 void setup() {
   Serial.begin(9600); // enable serial monitor
+  cli();
   //TIMERS & INTERRUPTS
   TCCR1A = 0;  //reset  
   TCCR1B = 0;
   TCCR1B = 5;  //set timer1 prescaler to /1024
-  TIMSK1 = 0x1;
+  TIMSK1 = 1; //enable overflow interrupt for timer1
   
   attachInterrupt(digitalPinToInterrupt(badPosturePin), postureHandler, CHANGE);  
 
@@ -111,6 +113,7 @@ void setup() {
    ledF = 1;
    ledG = 0;
    ledH = 0;*/
+   sei();
 }
 
 //**************************************************************************************
@@ -126,6 +129,8 @@ void loop() {
     turnOnB();
    if ( timerP2 ) 
     turnOnC();
+   if ( timerP3 ) 
+    turnOnD();
     
     
    // BACK
@@ -172,13 +177,14 @@ void postureHandler(){
   if(badPosture){
       Serial.println("bad");
       TCNT1 = 0; //Reset timer1 so that the count for bad posture can restart
-      TIMSK1 = 6; //enable OCR1A/B (timer compare interrupts)
+      TIMSK1 = 7; //enable OCR1A/B (timer compare interrupts) as well as timer overflow interrupt
   }
  if(!badPosture) {
       Serial.println("good");
-      TIMSK1 = 0; //disable timer compare interrupts
+      TIMSK1 = 1; //disable timer compare interrupts, keep timer overflow interrupt enabled
       timerP1 = false;
       timerP2 = false;
+      timerP3 = false;
  }
 }
 
@@ -192,8 +198,10 @@ ISR (TIMER1_COMPB_vect) { //intermediate bad posture, after 100 seconds
   timerP2 = true;
 }
 
-ISR(TIMER1_OVF_vect) {
+ISR (TIMER1_OVF_vect) {
+  Serial.println("overflow");
   timer1_ovf++;
+  timerP3 = true;
 }
 
 //**************************************************************************************
