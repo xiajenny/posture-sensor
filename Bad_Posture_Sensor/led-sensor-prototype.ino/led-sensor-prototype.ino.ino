@@ -179,7 +179,7 @@ void loop() {
       turnOnE();                                                                          // turn on back indicator light
     }
     else {                                                                                // if back sensor shows that posture is fine
-      turnOffLEDS();
+//      turnOffLEDS();
       if (startBack) {                                                                    // and if back sensor timer started already
         totalBackTime = ((timer2Millis() - startTimeBack ) + totalBackTime);              // calculate total time back posture was bad
         startBack = false;                                                                // reset flag for timer
@@ -196,7 +196,7 @@ void loop() {
       turnOnF();
     }
     else {
-      turnOffLEDS();
+//      turnOffLEDS();
       if (startShoulderL) {
         totalShoulderLTime = ((timer2Millis() - startTimeShoulderL ) + totalShoulderLTime);
         startShoulderL = false;
@@ -213,7 +213,7 @@ void loop() {
       turnOnG();
     }
     else {
-      turnOffLEDS();
+//      turnOffLEDS();
       if (startShoulderR) {
         totalShoulderRTime = ((timer2Millis() - startTimeShoulderR ) + totalShoulderRTime);
         startShoulderR = false;
@@ -230,7 +230,7 @@ void loop() {
       turnOnH();
     }
     else {
-      turnOffLEDS();
+//      turnOffLEDS();
       if (startNeck) {
         totalNeckTime = ((timer2Millis() - startTimeNeck ) + totalNeckTime);
         startNeck = false;
