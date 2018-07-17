@@ -355,7 +355,19 @@ float timer2Millis() {
 
 //**************************************************************************************
 //                               LED FUNCTIONS
+
+//port based digital writing
+//PORT B controls pin 8-13
+//8 = c1 = 1 = 
+//9 = c2 = 2 = 
+//10 = c3 = 4 = 
+//11 = c4 = 8 = 
+//12 = r1 = 16 =
+//13 = r2 = 32 = 
+
 void turnOnA() {
+  PORTB = B11100001;
+  /*
   //turn only 'a' on
   digitalWrite (ledPinC1, HIGH);
   digitalWrite (ledPinC2, LOW);
@@ -363,10 +375,13 @@ void turnOnA() {
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, LOW);
   digitalWrite (ledPinR2, HIGH);
+  */
   delay(delayTime);
 }
 
 void turnOnB() {
+  PORTB = B11100010;
+  /*
   //turn only 'b' on
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, HIGH);
@@ -374,10 +389,13 @@ void turnOnB() {
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, LOW);
   digitalWrite (ledPinR2, HIGH);
+  */
   delay(delayTime);
 }
 
 void turnOnC() {
+  PORTB = B11100100;
+  /*
   //turn only 'c' on
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, LOW);
@@ -385,10 +403,13 @@ void turnOnC() {
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, LOW);
   digitalWrite (ledPinR2, HIGH);
+  */
   delay(delayTime);
 }
 
 void turnOnD() {
+  PORTB = B11101000;
+  /*
   //turn only 'd' on
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, LOW);
@@ -396,10 +417,13 @@ void turnOnD() {
   digitalWrite (ledPinC4, HIGH);
   digitalWrite (ledPinR1, LOW);
   digitalWrite (ledPinR2, HIGH);
+  */
   delay(delayTime);
 }
 
 void turnOnE() {
+  PORTB = B11010001;
+  /*
   //turn only 'e' on
   digitalWrite (ledPinC1, HIGH);
   digitalWrite (ledPinC2, LOW);
@@ -407,10 +431,13 @@ void turnOnE() {
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, HIGH);
   digitalWrite (ledPinR2, LOW);
+  */
   delay(delayTime);
 }
 
 void turnOnF() {
+    PORTB = B11010010;
+  /*
   //turn only 'f' on
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, HIGH);
@@ -418,10 +445,13 @@ void turnOnF() {
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, HIGH);
   digitalWrite (ledPinR2, LOW);
+  */
   delay(delayTime);
 }
 
 void turnOnG() {
+  PORTB = B11010100;
+  /*
   //turn only 'g' on
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, LOW);
@@ -429,10 +459,13 @@ void turnOnG() {
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, HIGH);
   digitalWrite (ledPinR2, LOW);
+  */
   delay(delayTime);
 }
 
 void turnOnH() {
+   PORTB = B11011000;
+  /*
   //turn only 'h' on
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, LOW);
@@ -440,17 +473,21 @@ void turnOnH() {
   digitalWrite (ledPinC4, HIGH);
   digitalWrite (ledPinR1, HIGH);
   digitalWrite (ledPinR2, LOW);
+  */
   delay(delayTime);
 }
 
 void turnOffLEDS() {
-  //turn oall LEDS off
+  PORTB = B11000000;
+  /*
+  //turn all LEDS off
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, LOW);
   digitalWrite (ledPinC3, LOW);
   digitalWrite (ledPinC4, LOW);
   digitalWrite (ledPinR1, LOW);
   digitalWrite (ledPinR2, LOW);
+  */
   delay(delayTime);
 }
 //**************************************************************************************
