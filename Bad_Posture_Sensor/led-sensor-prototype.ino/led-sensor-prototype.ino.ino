@@ -14,12 +14,12 @@
 //**************************************************************************************
 //                              SENSOR VARIABLE DECLARATION
 
-int backSensor = 4; //input pin for back sensor
-int shoulderLSensor = 5; //input pin for left shoulder sensor
-int shoulderRSensor = 6; //input pin for right shoulder sensor
-int neckSensor = 7; // input pin for neck sensor
+const int backSensor = 4; //input pin for back sensor
+const int shoulderLSensor = 5; //input pin for left shoulder sensor
+const int shoulderRSensor = 6; //input pin for right shoulder sensor
+const int neckSensor = 7; // input pin for neck sensor
 
-int badPosturePin = 2; //input indicates if any bad posture is sensed
+const int badPosturePin = 2; //input indicates if any bad posture is sensed
 //(result of 4 OR gate from back, shoulders, and neck sensors)
 volatile bool badPosture = 0;
 
@@ -34,29 +34,29 @@ volatile bool timerP3 = false;
 //Overall bad posture timing variables
 volatile bool startTime = false;
 volatile bool endTime = false;
-float startOverallTime = 0;
-float duration = 0;
+float startOverallTime = 0.0;
+float duration = 0.0;
 
 //Individual bad posture timer variables
-bool startBack = false;
+volatile bool startBack = false;
 float startTimeBack = 0.0;
 float totalBackTime = 0.0;
 
-bool startShoulderL = false;
+volatile bool startShoulderL = false;
 float startTimeShoulderL = 0.0;
 float totalShoulderLTime = 0.0;
 
-bool startShoulderR = false;
+volatile bool startShoulderR = false;
 float startTimeShoulderR = 0.0;
 float totalShoulderRTime = 0.0;
 
-bool startNeck = false;
+volatile bool startNeck = false;
 float startTimeNeck = 0.0;
 float totalNeckTime = 0.0;
 
 
-unsigned long int timer1_ovf = 0;
-unsigned long int timer2_ovf = 0;
+volatile unsigned long int timer1_ovf = 0;
+volatile unsigned long int timer2_ovf = 0;
 
 //**************************************************************************************
 //                               LED VARIABLE DECLARATION
@@ -106,7 +106,7 @@ void setup() {
   TCCR2A = 0;  //reset
   TCCR2B = 0;  //reset
   TCCR2B = 7;  //set timer2 prescaler to /1024
-  
+
   TIMSK1 = 1; //enable overflow interrupt for timer1 (used for our timer1Millis())
   TIMSK2 = 1; //enable overflow interrupt for timer2 (used for our timer2Millis())
 
@@ -146,30 +146,30 @@ void setup() {
 //                              MAIN LOOP
 
 void loop() {
-  //Serial.print("restarted loop ");
-  //Serial.println(timer2Millis()/1000);
+
   while (badPosture) {
-  //Serial.print("badposture ");
-  //Serial.println(timer1Millis()/1000);
-  
+
     if (startTime) {
       startOverallTime = timer2Millis();  //set start time for timing overall bad posture
+      timerP1 = false;
+      timerP2 = false;
+      timerP3 = false;
       startTime = false;                  //reset flag
     }
-    
+
     //The following statements turn on the "timing indicator" lights (top row of LEDs)
     // based on flags from timer interrupts
     turnOnA();        // turns on as soon as bad posture starts
-    if ( timerP1 )    
+    if ( timerP1 )
       turnOnB();      // turns on when timer1 compare A triggered
     if ( timerP2 )
       turnOnC();      // turns on when timer1 compare B triggered
     if ( timerP3 )
       turnOnD();      // turns on when timer1 overflow triggered
 
-    //The following 4 if statements turn on the "target problem area indicator" lights (bottom row of LEDS)                                                             
+    //The following 4 if statements turn on the "target problem area indicator" lights (bottom row of LEDS)
     //as well as start and execute timing calculations for the individual areas
-    
+
     // BACK
     if ( digitalRead(backSensor) ) {                                                      // if back sensor shows bad posture, = 1
       if (!startBack) {                                                                   // and if the back sensor timing hasn't started yet, set startTimeBack to current time
@@ -179,11 +179,12 @@ void loop() {
       turnOnE();                                                                          // turn on back indicator light
     }
     else {                                                                                // if back sensor shows that posture is fine
-//      turnOffLEDS();
+      //      turnOffLEDS();
       if (startBack) {                                                                    // and if back sensor timer started already
         totalBackTime = ((timer2Millis() - startTimeBack ) + totalBackTime);              // calculate total time back posture was bad
         startBack = false;                                                                // reset flag for timer
-        Serial.println( totalBackTime / 1000 );
+        Serial.print( totalBackTime / 1000 );
+        Serial.println("s of bad back posture elapsed");
       }
     }
 
@@ -196,11 +197,12 @@ void loop() {
       turnOnF();
     }
     else {
-//      turnOffLEDS();
+      //      turnOffLEDS();
       if (startShoulderL) {
         totalShoulderLTime = ((timer2Millis() - startTimeShoulderL ) + totalShoulderLTime);
         startShoulderL = false;
-        Serial.println( totalShoulderLTime / 1000 );
+        Serial.print( totalShoulderLTime / 1000 );
+        Serial.println("s of bad left shoulder posture elapsed");
       }
     }
 
@@ -213,11 +215,12 @@ void loop() {
       turnOnG();
     }
     else {
-//      turnOffLEDS();
+      //      turnOffLEDS();
       if (startShoulderR) {
         totalShoulderRTime = ((timer2Millis() - startTimeShoulderR ) + totalShoulderRTime);
         startShoulderR = false;
-        Serial.println( totalShoulderRTime / 1000 );
+        Serial.print( totalShoulderRTime / 1000 );
+        Serial.println("s of bad right shoulder posture elapsed");
       }
     }
 
@@ -230,11 +233,12 @@ void loop() {
       turnOnH();
     }
     else {
-//      turnOffLEDS();
+      //      turnOffLEDS();
       if (startNeck) {
         totalNeckTime = ((timer2Millis() - startTimeNeck ) + totalNeckTime);
         startNeck = false;
-        Serial.println( totalNeckTime / 1000 );
+        Serial.print( totalNeckTime / 1000 );
+        Serial.println("s of bad neck posture elapsed");
       }
     }
 
@@ -293,32 +297,29 @@ void postureHandler() {
   if (!badPosture) {
     Serial.println("good");
     TIMSK1 = 1; //disable timer compare interrupts, keep timer overflow interrupt enabled
-    timerP1 = false;
-    timerP2 = false;
-    timerP3 = false;
     startTime = false;
     endTime = true;
   }
 }
 
 ISR (TIMER1_COMPA_vect) { //intermediate bad posture, after 100 seconds
-  Serial.println("1.5s");
+//  Serial.println("1.5s");
   timerP1 = true;
 }
 
 ISR (TIMER1_COMPB_vect) { //intermediate bad posture, after 100 seconds
-  Serial.println("3s");
+//  Serial.println("3s");
   timerP2 = true;
 }
 
 ISR (TIMER1_OVF_vect) {
-  Serial.println("overflow");
+//  Serial.println("overflow");
   timer1_ovf++;
   timerP3 = true;
 }
 
 ISR (TIMER2_OVF_vect) {
- // Serial.println("overflow");
+  // Serial.println("overflow");
   timer2_ovf++;
 }
 
