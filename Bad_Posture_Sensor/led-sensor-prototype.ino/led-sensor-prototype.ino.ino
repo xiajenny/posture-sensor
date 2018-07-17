@@ -249,7 +249,7 @@ void loop() {
 
     if (endTime) {
       duration = (timer2Millis() - startOverallTime); //calculate duration
-
+      
       //Printing recorded timings
       Serial.print("Overall bad posture lasted for: ");
       Serial.print(duration / 1000);
@@ -266,7 +266,7 @@ void loop() {
 
       Serial.print("Neck time: ");
       Serial.println(totalNeckTime / 1000);
-
+      
       totalBackTime = 0;
       totalShoulderLTime = 0;
       totalShoulderRTime = 0;
