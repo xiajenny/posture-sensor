@@ -444,7 +444,7 @@ void turnOnH() {
 }
 
 void turnOffLEDS() {
-  //turn oall LEDS off
+  //turn all LEDS off
   digitalWrite (ledPinC1, LOW);
   digitalWrite (ledPinC2, LOW);
   digitalWrite (ledPinC3, LOW);
